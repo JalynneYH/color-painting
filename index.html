@@ -10,24 +10,23 @@
 
   <!-- ✅ 페이지별 좌표 CSS (canvas height만 최적화해서 footer 위 여백 줄임) -->
   <style>
-  .canvas.color-canvas{
-    height:8100px; /* footer가 마지막 썸네일 바로 아래 오도록 조정 */
-  }
+    .canvas.color-canvas{
+      height:8100px; /* footer가 마지막 썸네일 바로 아래 오도록 조정 */
+    }
 
-  .color-canvas .t01{left:494.0px;top:2363.0px;width:560.766px;height:672.0px;}
-  .color-canvas .t02{left:45.0px;top:263.0px;width:897.63px;height:1076.0px;}
-  .color-canvas .t03{left:662.0px;top:4067.0px;width:392.55px;height:579.0px;}
-  .color-canvas .t04{left:1083.0px;top:1339.0px;width:786.0px;height:1023.67px;}
-  .color-canvas .t05{left:1055.0px;top:3079.0px;width:527.0px;height:746.659px;}
-  .color-canvas .t06{left:1553.0px;top:4708.0px;width:316.0px;height:380.016px;}
-  .color-canvas .t07{left:45.0px;top:5150.0px;width:1010.42px;height:835.481px;}
-  .color-canvas .t08{left:1055.0px;top:6055.0px;width:432.863px;height:520.437px;}
-  .color-canvas .t09{left:387.0px;top:6297.0px;width:642.0px;height:811.0px;}
-  .color-canvas .t10{left:1055.0px;top:6832.0px;width:216.0px;height:276.0px;}
-  .color-canvas .t11{left:662.0px;top:7142.0px;width:367.0px;height:525.0px;}
-  .color-canvas .t12{left:1055.0px;top:7135.0px;width:765.0px;height:967.0px;}
-</style>
-
+    .color-canvas .t01{left:494.0px;top:2363.0px;width:560.766px;height:672.0px;}
+    .color-canvas .t02{left:45.0px;top:263.0px;width:897.63px;height:1076.0px;}
+    .color-canvas .t03{left:662.0px;top:4067.0px;width:392.55px;height:579.0px;}
+    .color-canvas .t04{left:1083.0px;top:1339.0px;width:786.0px;height:1023.67px;}
+    .color-canvas .t05{left:1055.0px;top:3079.0px;width:527.0px;height:746.659px;}
+    .color-canvas .t06{left:1553.0px;top:4708.0px;width:316.0px;height:380.016px;}
+    .color-canvas .t07{left:45.0px;top:5150.0px;width:1010.42px;height:835.481px;}
+    .color-canvas .t08{left:1055.0px;top:6055.0px;width:432.863px;height:520.437px;}
+    .color-canvas .t09{left:387.0px;top:6297.0px;width:642.0px;height:811.0px;}
+    .color-canvas .t10{left:1055.0px;top:6832.0px;width:216.0px;height:276.0px;}
+    .color-canvas .t11{left:662.0px;top:7142.0px;width:367.0px;height:525.0px;}
+    .color-canvas .t12{left:1055.0px;top:7135.0px;width:765.0px;height:967.0px;}
+  </style>
 </head>
 
 <body>
@@ -53,7 +52,7 @@
   </header>
 
   <!-- =========================
-       PAGE (footer가 맨 아래로 자연스럽게 내려가게 page로 감싸기)
+       PAGE
   ========================== -->
   <div class="page">
     <!-- =========================
@@ -62,21 +61,22 @@
     <div class="stage section-gap-top">
       <div class="canvas-stage">
         <div class="canvas-wrap">
-          <div class="canvas color-canvas" data-height="8180">
+          <!-- ✅ data-height를 CSS height(8100)과 동일하게 정리 -->
+          <div class="canvas color-canvas" data-height="8100">
 
-            <!-- ✅ 썸네일 (png) -->
-            <a class="thumb t01" href="./detail.html?type=color&id=1"><img src="./assets/color/thumb-01.png" alt=""></a>
-            <a class="thumb t02" href="./detail.html?type=color&id=2"><img src="./assets/color/thumb-02.png" alt=""></a>
-            <a class="thumb t03" href="./detail.html?type=color&id=3"><img src="./assets/color/thumb-03.png" alt=""></a>
-            <a class="thumb t04" href="./detail.html?type=color&id=4"><img src="./assets/color/thumb-04.png" alt=""></a>
-            <a class="thumb t05" href="./detail.html?type=color&id=5"><img src="./assets/color/thumb-05.png" alt=""></a>
-            <a class="thumb t06" href="./detail.html?type=color&id=6"><img src="./assets/color/thumb-06.png" alt=""></a>
-            <a class="thumb t07" href="./detail.html?type=color&id=7"><img src="./assets/color/thumb-07.png" alt=""></a>
-            <a class="thumb t08" href="./detail.html?type=color&id=8"><img src="./assets/color/thumb-08.png" alt=""></a>
-            <a class="thumb t09" href="./detail.html?type=color&id=9"><img src="./assets/color/thumb-09.png" alt=""></a>
-            <a class="thumb t10" href="./detail.html?type=color&id=10"><img src="./assets/color/thumb-10.png" alt=""></a>
-            <a class="thumb t11" href="./detail.html?type=color&id=11"><img src="./assets/color/thumb-11.png" alt=""></a>
-            <a class="thumb t12" href="./detail.html?type=color&id=12"><img src="./assets/color/thumb-12.png" alt=""></a>
+            <!-- ✅ 썸네일 -> 컬러 레포 루트 detail.html로 연결 (type 제거) -->
+            <a class="thumb t01" href="./detail.html?id=1"><img src="./assets/color/thumb-01.png" alt=""></a>
+            <a class="thumb t02" href="./detail.html?id=2"><img src="./assets/color/thumb-02.png" alt=""></a>
+            <a class="thumb t03" href="./detail.html?id=3"><img src="./assets/color/thumb-03.png" alt=""></a>
+            <a class="thumb t04" href="./detail.html?id=4"><img src="./assets/color/thumb-04.png" alt=""></a>
+            <a class="thumb t05" href="./detail.html?id=5"><img src="./assets/color/thumb-05.png" alt=""></a>
+            <a class="thumb t06" href="./detail.html?id=6"><img src="./assets/color/thumb-06.png" alt=""></a>
+            <a class="thumb t07" href="./detail.html?id=7"><img src="./assets/color/thumb-07.png" alt=""></a>
+            <a class="thumb t08" href="./detail.html?id=8"><img src="./assets/color/thumb-08.png" alt=""></a>
+            <a class="thumb t09" href="./detail.html?id=9"><img src="./assets/color/thumb-09.png" alt=""></a>
+            <a class="thumb t10" href="./detail.html?id=10"><img src="./assets/color/thumb-10.png" alt=""></a>
+            <a class="thumb t11" href="./detail.html?id=11"><img src="./assets/color/thumb-11.png" alt=""></a>
+            <a class="thumb t12" href="./detail.html?id=12"><img src="./assets/color/thumb-12.png" alt=""></a>
 
           </div>
         </div>
