@@ -18,6 +18,7 @@
       align-items:center;
       justify-content:center;
     }
+
     .dslide{
       position:absolute;
       inset:0;
@@ -29,13 +30,16 @@
       pointer-events:none;
     }
     .dslide.active{ opacity:1; pointer-events:auto; }
+
+    /* ✅ “잘리지 않고” 화면에 맞게 줄어들기 */
     .dslide img{
       width:100%;
       height:100%;
-      object-fit:contain; /* ✅ 창 작아져도 잘리지 않게 */
+      object-fit:contain;
       display:block;
     }
 
+    /* ✅ 화살표 좌/우 고정 */
     .detail-btn{
       position:absolute;
       top:50%;
@@ -52,34 +56,37 @@
     .detail-btn.prev{ left:18px; }
     .detail-btn.next{ right:18px; }
 
-    .detail-body{
-      max-width:860px;
-      margin:0 auto;
-      padding:22px 20px 0;
+    /* =================================================
+       ✅ 캡션을 “이미지 왼쪽” 기준으로 맞추는 핵심 구조
+       - hero 아래에 figure(폭 제한)로 묶고
+       - caption은 figure 내부에서 left 정렬
+    ================================================= */
+    .detail-figure{
+      width:min(92vw, 1100px);
+      margin: 10px auto 0;  /* hero 아래 살짝 띄움 */
     }
 
-    /* ✅ 캡션을 이미지 왼쪽에 맞추기 위해 inner를 JS로 맞춥니다 */
-    .caption-wrap{ width:100%; }
-    .caption-inner{ }
-
     .detail-caption{
+      margin-top:4px;       /* ✅ 이미지 바로 아래 */
+      text-align:left;      /* ✅ 이미지 왼쪽 끝 */
       font-size:12px;
       font-weight:700;
       opacity:0.95;
-      margin-top:10px;   /* ✅ 이미지-캡션 간격(한 줄 느낌) */
-      line-height:1.5;
+      line-height:1.45;
     }
 
-    .detail-text{
-      margin-top:28px;   /* ✅ 캡션과 설명 사이 여유 */
-      font-size:14px;    /* ✅ 캡션보다 조금 크게 */
+    .detail-desc{
+      max-width:860px;
+      margin: 26px auto 0;  /* 캡션과 설명 사이 */
+      padding:0 20px;
+      font-size:15px;       /* ✅ 기존 14px보다 키움 */
       line-height:1.9;
       opacity:0.9;
       white-space:pre-wrap;
     }
 
     .detail-spacer{
-      height:240px; /* ✅ 설명 밑 10줄 여백(일괄) */
+      height:240px; /* ✅ 설명 밑 여백(원하셨던 10줄 느낌) */
     }
 
     .back-link{
@@ -108,16 +115,14 @@
   <div class="detail-btn next" id="dNext">&#10095;</div>
 </section>
 
-<div class="detail-body">
-  <div class="caption-wrap">
-    <div class="caption-inner" id="captionInner">
-      <div class="detail-caption" id="detailCaption"></div>
-    </div>
-  </div>
-
-  <div class="detail-text" id="detailText"></div>
-  <div class="detail-spacer"></div>
+<!-- ✅ 캡션을 이미지 왼쪽 기준으로 붙이기 위한 figure -->
+<div class="detail-figure">
+  <div class="detail-caption" id="detailCaption"></div>
 </div>
+
+<!-- ✅ 설명(없으면 숨김) -->
+<div class="detail-desc" id="detailText"></div>
+<div class="detail-spacer" id="detailSpacer"></div>
 
 <div class="footer">© 2025 LEE YUNHA. All rights reserved.</div>
 <button class="scroll-top-btn" id="scrollTopBtn"><span>&uarr;</span></button>
@@ -125,10 +130,10 @@
 <script src="./js/app.js"></script>
 <script>
 /* =================================================
-   ✅ 컬러 데이터(윤하님 제공 1~12 적용)
+   ✅ 컬러 데이터(1~12)
    - caption: 캡션 한 줄
    - desc: 설명(없으면 "")
-   - urls: 이미지 URL 배열 (1장이라도 배열로)
+   - urls: 이미지 URL 배열
 ================================================= */
 const COLOR_DATA = {
   "1": { caption: "시선의 끝(1), 2025, 장지에 혼합재료",
@@ -209,14 +214,19 @@ const p = new URLSearchParams(location.search);
 const id = p.get("id") || "1";
 const data = COLOR_DATA[id] || { caption: "", desc: "", urls: [] };
 
+/* 캡션/설명 */
 document.getElementById("detailCaption").innerText = data.caption || "";
 
 const textEl = document.getElementById("detailText");
+const spacer = document.getElementById("detailSpacer");
+
 if (data.desc && data.desc.trim().length){
   textEl.innerText = data.desc;
   textEl.style.display = "block";
+  spacer.style.display = "block";
 } else {
   textEl.style.display = "none";
+  spacer.style.display = "none";
 }
 
 /* ✅ 슬라이드 생성 */
@@ -236,7 +246,6 @@ urls.forEach((src, i) => {
 function show(i){
   slides.forEach(s=>s.classList.remove("active"));
   slides[i].classList.add("active");
-  alignCaptionToImage();
 }
 
 const prev = document.getElementById("dPrev");
@@ -256,30 +265,6 @@ next.addEventListener("click", ()=>{
   idx = (idx + 1) % slides.length;
   show(idx);
 });
-
-/* ✅ 캡션을 “현재 보이는 이미지의 왼쪽 끝”에 맞추기 */
-function alignCaptionToImage(){
-  const active = hero.querySelector(".dslide.active img");
-  const inner = document.getElementById("captionInner");
-  if(!active || !inner) return;
-
-  if(!active.complete || active.naturalWidth === 0){
-    setTimeout(alignCaptionToImage, 80);
-    return;
-  }
-
-  const heroRect = hero.getBoundingClientRect();
-  const imgRect  = active.getBoundingClientRect();
-
-  const left = Math.max(0, imgRect.left - heroRect.left);
-  const width = Math.max(0, imgRect.width);
-
-  inner.style.marginLeft = left + "px";
-  inner.style.width = width + "px";
-}
-
-window.addEventListener("load", alignCaptionToImage);
-window.addEventListener("resize", alignCaptionToImage);
 </script>
 </body>
 </html>
