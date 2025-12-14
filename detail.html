@@ -58,7 +58,6 @@
       padding:22px 20px 0;
     }
 
-    /* ✅ 캡션을 이미지 왼쪽에 맞추기 위해 inner를 JS로 맞춥니다 */
     .caption-wrap{ width:100%; }
     .caption-inner{ }
 
@@ -66,41 +65,78 @@
       font-size:12px;
       font-weight:700;
       opacity:0.95;
-      margin-top:10px;   /* ✅ 이미지-캡션 간격(한 줄 느낌) */
+      margin-top:10px;   /* ✅ 기존 유지 */
       line-height:1.5;
     }
 
     .detail-text{
-      margin-top:28px;   /* ✅ 캡션과 설명 사이 여유 */
-      font-size:14px;    /* ✅ 캡션보다 조금 크게 */
+      margin-top:28px;   /* ✅ 기존 유지 */
+      font-size:14px;
       line-height:1.9;
       opacity:0.9;
       white-space:pre-wrap;
     }
 
     .detail-spacer{
-      height:240px; /* ✅ 설명 밑 10줄 여백(일괄) */
+      height:240px;
     }
 
-    .back-link{
-      font-size:12px;
-      letter-spacing:.08em;
-      color:#fff;
-      font-weight:700;
+    /* ✅ BACK 아이콘 버튼 */
+    .back-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;
+      height:40px;
+      border-radius:9999px;
+      background:transparent;
+      border:0;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
+    .back-btn img{
+      width:24px;
+      height:24px;
+      display:block;
+      transform:translateX(0);
+      transition: transform .2s ease, opacity .2s ease;
+      opacity:0.9;
+    }
+    .back-btn:hover img{
+      transform:translateX(-4px);
+      opacity:1;
+    }
+    .back-btn:active img{
+      transform:translateX(-6px) scale(0.98);
+    }
+
+    /* ✅ 헤더 배치: 네비 왼쪽 / 백버튼 오른쪽 */
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .nav{ order:1; }
+    .back-area{ order:2; }
   </style>
 </head>
 
 <body>
 <header class="header">
-  <a href="./index.html" class="logo back-link">BACK</a>
-
   <nav class="nav" id="topNav">
     <a href="https://jalynneyh.github.io/">MAIN</a>
     <a href="https://jalynneyh.github.io/design/">DESIGN</a>
     <a href="https://jalynneyh.github.io/color-painting/" class="active">COLOR PAINTING</a>
     <a href="https://jalynneyh.github.io/ink-painting/">INK PAINTING</a>
   </nav>
+
+  <!-- ✅ BACK (아이콘) -->
+  <div class="back-area">
+    <button class="back-btn" id="backBtn" aria-label="Back">
+      <img src="./assets/ui/arrow-back.svg" alt="">
+    </button>
+  </div>
 </header>
 
 <section class="detail-hero" id="detailHero">
@@ -125,10 +161,27 @@
 <script src="./js/app.js"></script>
 <script>
 /* =================================================
+   ✅ BACK 동작:
+   - from=main 이면: 메인으로
+   - 아니면: 컬러 목록(index)으로
+================================================= */
+(function(){
+  const p = new URLSearchParams(location.search);
+  const from = p.get("from");
+  const backBtn = document.getElementById("backBtn");
+  if(!backBtn) return;
+
+  backBtn.addEventListener("click", () => {
+    if (from === "main") {
+      location.href = "https://jalynneyh.github.io/";
+    } else {
+      location.href = "./index.html";
+    }
+  });
+})();
+
+/* =================================================
    ✅ 컬러 데이터(윤하님 제공 1~12 적용)
-   - caption: 캡션 한 줄
-   - desc: 설명(없으면 "")
-   - urls: 이미지 URL 배열 (1장이라도 배열로)
 ================================================= */
 const COLOR_DATA = {
   "1": { caption: "시선의 끝(1), 2025, 장지에 혼합재료",
