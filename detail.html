@@ -3,117 +3,331 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>LEE YUNHA – COLOR PAINTING DETAIL</title>
+  <title>LEE YUNHA – COLOR DETAIL</title>
+
+  <!-- ✅ 컬러 레포 내부 상대경로 -->
   <link rel="stylesheet" href="./css/style.css"/>
+
+  <style>
+    /* ===============================
+       DETAIL HERO (이미지/슬라이드)
+    =============================== */
+    .detail-hero{
+      position:relative;
+      width:100%;
+      height:92vh;
+      min-height:520px;
+      background:#0b0b0b;
+      overflow:hidden;
+    }
+    .dslide{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      transition:opacity .9s ease-in-out;
+    }
+    .dslide.active{ opacity:1; }
+
+    /* ✅ 창 줄여도 잘리지 않게 contain */
+    .detail-hero img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+    }
+
+    /* 슬라이드 버튼 */
+    .detail-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:44px;
+      color:#fff;
+      opacity:.75;
+      cursor:pointer;
+      z-index:20;
+      padding:14px 16px;
+      user-select:none;
+    }
+    .detail-btn:hover{ opacity:1; }
+    #dPrev{ left:18px; }
+    #dNext{ right:18px; }
+
+    /* ===============================
+       TEXT AREA
+    =============================== */
+    .detail-body{
+      max-width:860px;
+      margin:0 auto;
+      padding:24px 20px 10px;
+    }
+
+    /* 캡션: 이미지 하단에서 반줄 간격 + 좌측정렬 */
+    .detail-caption{
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.02em;
+      margin-top:14px;
+      text-align:left;
+    }
+
+    /* 설명: 캡션 아래 로고 2.5개 정도 간격 */
+    .detail-text{
+      margin-top:68px;
+      font-size:12px;
+      line-height:1.8;
+      opacity:.9;
+      white-space:pre-wrap;
+    }
+
+    /* BACK 버튼 (로고 자리) */
+    .detail-back{
+      font-size:12px;
+      letter-spacing:.08em;
+      font-weight:700;
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+    }
+  </style>
 </head>
 
 <body>
 
 <header class="header">
-  <a href="./" class="logo">
-    <img src="https://d2w9rnfcy7mm78.cloudfront.net/41642537/original_749a650870eb16479c7e492221affde4.png" alt="LEE YUNHA Logo">
-  </a>
+  <!-- ✅ 로고 대신 BACK -->
+  <a href="./index.html" class="logo detail-back" id="backLink">BACK</a>
+
   <nav class="nav" id="topNav">
     <a href="https://jalynneyh.github.io/">MAIN</a>
     <a href="https://jalynneyh.github.io/design/">DESIGN</a>
-    <a href="./">COLOR PAINTING</a>
+    <a href="https://jalynneyh.github.io/color-painting/">COLOR PAINTING</a>
     <a href="https://jalynneyh.github.io/ink-painting/">INK PAINTING</a>
   </nav>
 </header>
 
-<div class="page">
+<section class="detail-hero" id="detailHero">
+  <div class="detail-btn prev" id="dPrev">&#10094;</div>
+  <div class="detail-btn next" id="dNext">&#10095;</div>
+</section>
 
-  <!-- =========================
-       DETAIL SLIDER
-  ========================== -->
-  <section class="detail-hero" id="detailHero">
-    <!-- JS로 이미지 삽입 -->
-    <div class="detail-nav">
-      <div class="detail-btn prev" id="prevBtn">&#10094;</div>
-      <div class="detail-btn next" id="nextBtn">&#10095;</div>
-    </div>
-  </section>
-
-  <!-- =========================
-       DETAIL TEXT
-  ========================== -->
-  <div class="detail-body">
-    <div class="detail-meta" id="detailMeta"></div>
-    <div class="detail-text" id="detailText"></div>
-  </div>
-
-  <div class="footer">© 2025 LEE YUNHA. All rights reserved.</div>
+<div class="detail-body">
+  <div class="detail-caption" id="detailCaption"></div>
+  <div class="detail-text" id="detailText"></div>
 </div>
 
+<div class="footer">© 2025 LEE YUNHA. All rights reserved.</div>
 <button class="scroll-top-btn" id="scrollTopBtn"><span>&uarr;</span></button>
 
+<script src="./js/app.js"></script>
 <script>
-/* =================================================
-   COLOR TEXT DATA (여기에 원고만 채우면 끝)
-================================================= */
-const TEXT = {
-  1: {
-    meta: "Color Painting · 2024",
-    text: `여기에 컬러 1번 작품 설명을 그대로 붙여넣으세요.`
+/* ===============================
+   BACK: 이전 페이지 우선, 없으면 index.html
+=============================== */
+(function(){
+  const back = document.getElementById("backLink");
+  if(!back) return;
+
+  back.addEventListener("click", function(e){
+    e.preventDefault();
+    // referrer가 있으면 뒤로, 없으면 index로
+    if(document.referrer && document.referrer.includes(location.origin)){
+      history.back();
+    }else{
+      location.href = "./index.html";
+    }
+  });
+})();
+
+/* ===============================
+   NAV ACTIVE: 컬러 디테일이면 COLOR만 active
+=============================== */
+(function(){
+  const nav = document.getElementById("topNav");
+  if(!nav) return;
+
+  nav.querySelectorAll("a").forEach(a=>a.classList.remove("active"));
+  nav.querySelectorAll("a").forEach(a=>{
+    const t = (a.textContent || "").toUpperCase();
+    if(t.includes("COLOR")) a.classList.add("active");
+  });
+})();
+
+/* ===============================
+   URL PARAM
+=============================== */
+const p = new URLSearchParams(location.search);
+const id = p.get("id") || "1";
+
+/* ===============================
+   ✅ COLOR DATA (윤하님 원고/링크 반영 완료)
+=============================== */
+const DATA = {
+  "1": {
+    caption: "시선의 끝(1), 2025, 장지에 혼합재료",
+    text: `내 작업은 사람들의 시선 끝에서 시작된다. 나는 시력이 좋지 않아 사람의 얼굴을 바로 앞에서 보아도 잘 구분하지 못한다. 그런 내게 누군가가 자신도 모르게 무언가를 바라보는 짧은 순간, 혹은 다른 것을 도외시하고 하나에 꽂혀 집중하는 시선들이 유독 눈에 들어왔다. 그런 순간들은 잘 정돈된 감정을 차려 두고 보여주는 것이 아니라, 그 사이로 생긴 틈을 내가 살짝 들여다보는 것에 가깝다. 나는 그런 틈을 놓치지 않고 기록해 둔다. 그 틈에는 단순한 언어로 표현할 수 없는 감정이 스며 있다. 조용히 감정이 묻어난 시선을 수집하고, 그 안을 탐험한다. 수집한 시선의 파편에 내 감정의 입자를 덧입혀 기록의 형태로 내보낸다. 사람은 살아가며 수많은 감정을 느끼지만 언어로 표현하는 것은 그중 십분지 일도 되지 않는다. 교육되고 조율된 표정 뒤에, 말끝에 머뭇거리다 삼켜버리고 만다. 삼켜버린 감정들을 틈으로 엿보고 수집하는 것. 이는 언어화되지 못하는 감정을 보여주는 작업이다. 일기와도 같다. 나는 관찰자와 탐험가 어딘가에서 줄을 타며 조용한 수집과 치환의 과정을 통해 시선 너머 보이지 않는 이야기를 직조하고자 한다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794647/original_1395b2f195073d535bf3fc385f60ebca.png?1765720213?bc=0"
+    ]
   },
-  2: {
-    meta: "Color Painting · 2024",
-    text: `여기에 컬러 2번 작품 설명`
+
+  "2": {
+    caption: "시선의 끝(2), 2025, 장지에 혼합재료",
+    text: `요즈음 사진과 음성 녹음본, 동영상 등 다시 돌려볼 수 있는 기록물을 모으고 있다. 사람의 시각적 기억은 꽤 쉽게 휘발될 수 있다는 것을 요즈음 느끼고 있기 때문이다. 예를 들어 어린 시절에 갔던 체험학습이나 여행 같은 경험들은 시간이 지나며 즐거웠다는 감정만 남는 경우가 있지 않나. 그날 무엇을 보고, 어떤 것을 했는지는 흐릿한 파편으로만 떠오르고 말이다. 이 작업도 그 일부다. 나는 지나간 것에 있어 미련을 많이 가지는 성격인 데다, 소유욕이 조금 있는 것 같다. 내가 좋아했던 것들을 시간이 지났다는 이유만으로 잃어버리고 싶지 않았다. 좋았던 것을 그저 좋았다는 감상으로만 남기는 것이 아니라 언제라도 꺼내볼 수 있게끔 작업하고 있다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794653/original_99d1e5bdcc72feaad692ef01c7753be7.png?1765720222?bc=0"
+    ]
+  },
+
+  "3": {
+    caption: "시선의 끝(3), 2025, 견에 혼합재료",
+    text: `이 작업은 시선 수집의 연장 선상이다. 누군가의 시선을 수집하면서 가장 기억에 남았던 시선은 좋아하는 것을 보고 표정이 따라가기도 전에 감정의 온도가 달라졌던 찰나의 시선이었던 것 같다. 어쩐지 그 뒤에 따라붙은 표정보다도 찰나의 시선이 더 날것에 가깝다는 생각이 들었다. 표정은 숨겨도 눈빛은 숨길 수 없다는 말이 떠오르기도 했고 말이다. 시선을 수집하기 위해 쓰는 방법은 여러 가지인데, 관찰이 주를 이룬다. 따로 시선을 수집하기 위해 시간을 내는 게 아니라, 평소에 다른 사람들을 자주 유심히 지켜보곤 한다. 사람들의 시선이 향하는 풍경이나 대상, 시선의 주인, 혹은 그 둘 모두를 포함한 전경을 찍어두기도 한다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794651/original_57d313776e0b865d625fdf5f60aeddb7.png?1765720220?bc=0"
+    ]
+  },
+
+  "4": {
+    caption: "시선의 끝(6), 2025, 장지에 혼합재료",
+    text: `이 작업은 시선 수집 연작 중 하나다. 사실 관객이야말로 정말 여러 위치에 놓일 수 있다고 생각한다. 해석자나 탐험가, 혹은 또 다른 시선의 주체가 될 수도 있지 않나. 나는 관객이 작업에서 비워진 시선의 끝을 각자의 경험과 감정으로 공감하며 읽어내는 역할을 맡았으면 한다. 내 작업은 하나의 제시문일 뿐이고, 관객은 그걸 해석하고 받아들이는 것이다. 그 과정에서 내면을 탐색하게 되면 나와 같은 탐험가가 되는 거고, 작품을 바라봄으로써 관객이 누군가의 시선 끝에 서게 된다면 또 다른 시선의 주체가 될 것이다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794648/original_b4aa6322d4b24f4b15b8a1316028fbe0.png?1765720215?bc=0"
+    ]
+  },
+
+  "5": {
+    caption: "시선의 끝(5), 2025, 견에 혼합재료",
+    text: `이 작품은 시선 연작이다. 누군가가 자신도 모르게 무언가를 바라보는 짧은 순간, 혹은 다른 것을 도외시하고 하나에 꽂혀 집중하는 시선들이 유독 눈에 들어왔다. 그런 순간들은 잘 정돈된 감정을 차려 두고 보여주는 것이 아니라, 그 사이로 생긴 틈을 내가 살짝 들여다보는 것에 가깝다. 나는 그런 틈을 놓치지 않고 기록해 둔다. 그 틈에는 단순한 언어로 표현할 수 없는 감정이 스며 있다. 조용히 감정이 묻어난 시선을 수집하고, 그 안을 탐험한다. 수집한 시선의 파편에 내 감정의 입자를 덧입혀 기록의 형태로 내보낸다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794655/original_836cf5180f30daefdacdba5d495a7775.png?1765720222?bc=0"
+    ]
+  },
+
+  "6": {
+    caption: "시선의 끝(6), 2025, 장지에 혼합재료",
+    text: `사람은 살아가며 수많은 감정을 느끼지만 언어로 표현하는 것은 그중 십분지 일도 되지 않는다. 교육되고 조율된 표정 뒤에, 말끝에 머뭇거리다 삼켜버리고 만다. 삼켜버린 감정들을 틈으로 엿보고 수집하는 것. 이는 언어화되지 못하는 감정을 보여주는 작업이다. 일기와도 같다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794657/original_1594eae2d1d45e9be6fc6e958765aef2.png?1765720228?bc=0"
+    ]
+  },
+
+  "7": {
+    caption: "용해된 이상, 2023, 장지에 채색",
+    text: `본 작업은 이미지와 텍스트의 관계성, 그리고 작가로서의 방법론적 표면을 각각 분리된 요소로 다루기보다 하나의 구조 안에서 통합하고자 한 시도에서 출발한다. 작품 속 이미지는 신화의 이야기를 모티프로 삼아 재해석된 장면의 일부만을 드러내며, 그 의미는 작가노트의 텍스트를 통해 비로소 완성된다. 이를 통해 ‘이야기’가 지닌 가장 큰 장점인 서사의 깊이와 해석의 즐거움을 관객에게 전달하고자 했다.
+방법론적 표면에 있어서는, 작품을 그릴 때마다 형식이나 소재를 바꾸는 것이 아니라, 자신만의 일관된 ‘해석의 루틴’을 구축하는 것이 중요하다고 판단했다. 신화를 단순히 인용하거나 상징으로 소비하는 대신, 신화가 지닌 사전적 의미와 그 안에 내재된 ‘인간의 이야기’를 현재의 시점에서 다시 읽어내는 방식이다. 그 과정에서 ‘인간’이라는 개념은 나에게 가장 가깝고 생생하게 호출할 수 있는 나 자신의 이야기로 귀결되었고, 이번 작업은 여성이라는 나의 정체성을 신화와 결합해 재해석하는 방향으로 전개되었다.
+
+이번 학기 작업은 하나의 시리즈로 기능한다. 앞선 작품들이 신의 영역을 다루었다면, 이후의 작품들은 인간의 영역을 다룬다. 그러나 신화 속에서 신과 인간은 언제나 명확히 분리되지 않으며, 특히 그리스·로마 신화의 신들은 인간과 거의 다르지 않은 욕망과 변덕을 지닌 존재로 등장한다. 이번 작품에 차용한 이피게네이아 역시 그러한 신들의 변덕 속에서 희생자이자 수혜자가 되었고, 동시에 스스로를 구원한 개척자이기도 하다.
+
+이피게네이아는 미케네의 왕 아가멤논의 딸로, 전쟁을 위해 신에게 바쳐진 제물이었다. 그녀는 두려움을 느끼면서도 도망치지 않았고, 결국 신의 연민으로 목숨을 건지게 된다. 이피게네이아는 바리데기처럼 전형적인 남성 중심 사회의 희생자이지만, 죽음을 앞두고서도 의연하고 당당한 태도를 유지한다. 신화 속 한 문장은 이러한 구조를 더욱 분명히 드러낸다. “남자가 죽으면 집안이 허전해지지만, 여자의 죽음은 그다지 대수로운 게 아니다.” 이는 서양 신화의 문장이지만, 오늘날에도 낯설지 않은 인식이다.
+
+현대 사회에서 여성은 여전히 많은 제약과 억압 속에 놓여 있다. 이를 완화하기 위한 움직임 중 하나가 페미니즘이지만, 동시에 강한 백래시 또한 존재한다. 개인의 의사와 무관하게 사회적 낙인이 찍히고, 사상 검증이 이루어지는 현실은 여성의 존재가 얼마나 쉽게 공격의 대상이 되는지를 보여준다. 이러한 구조는 특정 국가에 국한된 문제가 아니라, 전 세계적으로 반복되고 있는 문제라 할 수 있다.
+
+본 작품은 남성 중심 사회에서 억압받는 여성의 현실을 드러내는 동시에, 그 안에서도 사라지지 않는 저항 의지와 자기 구원의 가능성을 담고자 했다. 그림 속 인물의 얼굴을 시체나 인형처럼 창백하고 부자연스럽게 표현한 것은 사회가 여성에게 요구하는 특정한 모습, 혹은 대상화된 이미지를 반영한 것이다. 두 작품 사이의 ‘녹아내림’의 정도 차이는 시간성을 나타내며, 이때 녹아내리는 대상은 실제 인간이 아니라 마네킹이나 인형처럼 비인간화된 형상으로 설정되었다. 이는 인간이 사회 속에서 객체화되고, 기능화되는 과정을 은유한다.
+
+이러한 해석은 여성성에만 국한되지 않는다. 현대 사회에서 개인은 거대한 시스템 속에서 부품처럼 작동하거나, 그렇지 못할 경우 흐름 속에 용해된다. 그러나 인간은 완전히 소멸되는 존재가 아니라, 연속성을 지닌 채 다른 형태로 재구성될 수 있는 존재라 생각한다. 나 또한 사회의 흐름 속에서 여러 차례 용해되었지만, 그 경험들을 토대로 다시 생성될 형식을 모색하고 있다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794654/original_8b70e04e462d64e3fa28484345ba9724.jpg?1765720222?bc=0"
+    ]
+  },
+
+  "8": {
+    caption: "이상적인, 2023, 장지에 채색",
+    text: `본 작업은 이미지와 텍스트의 관계성, 그리고 작가로서의 방법론적 표면을 각각 분리된 요소로 다루기보다 하나의 구조 안에서 통합하고자 한 시도에서 출발한다. 작품 속 이미지는 신화의 이야기를 모티프로 삼아 재해석된 장면의 일부만을 드러내며, 그 의미는 작가노트의 텍스트를 통해 비로소 완성된다. 이를 통해 ‘이야기’가 지닌 가장 큰 장점인 서사의 깊이와 해석의 즐거움을 관객에게 전달하고자 했다.
+방법론적 표면에 있어서는, 작품을 그릴 때마다 형식이나 소재를 바꾸는 것이 아니라, 자신만의 일관된 ‘해석의 루틴’을 구축하는 것이 중요하다고 판단했다. 신화를 단순히 인용하거나 상징으로 소비하는 대신, 신화가 지닌 사전적 의미와 그 안에 내재된 ‘인간의 이야기’를 현재의 시점에서 다시 읽어내는 방식이다. 그 과정에서 ‘인간’이라는 개념은 나에게 가장 가깝고 생생하게 호출할 수 있는 나 자신의 이야기로 귀결되었고, 이번 작업은 여성이라는 나의 정체성을 신화와 결합해 재해석하는 방향으로 전개되었다.
+
+이번 학기 작업은 하나의 시리즈로 기능한다. 앞선 작품들이 신의 영역을 다루었다면, 이후의 작품들은 인간의 영역을 다룬다. 그러나 신화 속에서 신과 인간은 언제나 명확히 분리되지 않으며, 특히 그리스·로마 신화의 신들은 인간과 거의 다르지 않은 욕망과 변덕을 지닌 존재로 등장한다. 이번 작품에 차용한 이피게네이아 역시 그러한 신들의 변덕 속에서 희생자이자 수혜자가 되었고, 동시에 스스로를 구원한 개척자이기도 하다.
+
+이피게네이아는 미케네의 왕 아가멤논의 딸로, 전쟁을 위해 신에게 바쳐진 제물이었다. 그녀는 두려움을 느끼면서도 도망치지 않았고, 결국 신의 연민으로 목숨을 건지게 된다. 이피게네이아는 바리데기처럼 전형적인 남성 중심 사회의 희생자이지만, 죽음을 앞두고서도 의연하고 당당한 태도를 유지한다. 신화 속 한 문장은 이러한 구조를 더욱 분명히 드러낸다. “남자가 죽으면 집안이 허전해지지만, 여자의 죽음은 그다지 대수로운 게 아니다.” 이는 서양 신화의 문장이지만, 오늘날에도 낯설지 않은 인식이다.
+
+현대 사회에서 여성은 여전히 많은 제약과 억압 속에 놓여 있다. 이를 완화하기 위한 움직임 중 하나가 페미니즘이지만, 동시에 강한 백래시 또한 존재한다. 개인의 의사와 무관하게 사회적 낙인이 찍히고, 사상 검증이 이루어지는 현실은 여성의 존재가 얼마나 쉽게 공격의 대상이 되는지를 보여준다. 이러한 구조는 특정 국가에 국한된 문제가 아니라, 전 세계적으로 반복되고 있는 문제라 할 수 있다.
+
+본 작품은 남성 중심 사회에서 억압받는 여성의 현실을 드러내는 동시에, 그 안에서도 사라지지 않는 저항 의지와 자기 구원의 가능성을 담고자 했다. 그림 속 인물의 얼굴을 시체나 인형처럼 창백하고 부자연스럽게 표현한 것은 사회가 여성에게 요구하는 특정한 모습, 혹은 대상화된 이미지를 반영한 것이다. 두 작품 사이의 ‘녹아내림’의 정도 차이는 시간성을 나타내며, 이때 녹아내리는 대상은 실제 인간이 아니라 마네킹이나 인형처럼 비인간화된 형상으로 설정되었다. 이는 인간이 사회 속에서 객체화되고, 기능화되는 과정을 은유한다.
+
+이러한 해석은 여성성에만 국한되지 않는다. 현대 사회에서 개인은 거대한 시스템 속에서 부품처럼 작동하거나, 그렇지 못할 경우 흐름 속에 용해된다. 그러나 인간은 완전히 소멸되는 존재가 아니라, 연속성을 지닌 채 다른 형태로 재구성될 수 있는 존재라 생각한다. 나 또한 사회의 흐름 속에서 여러 차례 용해되었지만, 그 경험들을 토대로 다시 생성될 형식을 모색하고 있다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794649/original_eef0cdac66977d9c39e457404bbf9003.jpg?1765720216?bc=0"
+    ]
+  },
+
+  "9": {
+    caption: "대원의 등불 : 하ː얗다, 2023, 견에 혼합재료",
+    text: `불교에서는 모든 중생들이 하나의 등불이라 한다. 세상은 그런 등불들이 모여 사는 세계다. 하나의 존재는 그 하나만큼의 환한 밝기를 가지고 있다. 
+지장보살은 고대 농경사회에 성행했던 대지모신 신앙의 연속으로, 지장보살은 본래 인도 바라문의 딸이었는데 부처의 가르침에 귀의했다 한다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794646/original_28f04d3e791bda15502fb5d289693bba.png?1765720207?bc=0"
+    ]
+  },
+
+  "10": {
+    caption: "갈증, 2023, 견에 채색",
+    text: `가끔 물에 빠지고 싶은 기분이 든다.물 속에 하염없이 푹 잠겨있고 싶기도 하고, 어디론가 물 따라 흘러가고픈 생각도 들었다. 그런 날의 공기는 눅눅하고 축축하기 그지없다. 사람의 마음에도 날씨가 있다면 유달리 긴 장마가 온 것이 틀림없을 것이다. 사람들은 누구나 기대를 하고, 기대를 받기도 하며 살아간다. 나는 작게는 집안의 외동이고, 크게는 엄격했던 할아버지가 고인이 되시기 전까지 가장 아꼈던 손녀였다. 사이가 좋은 것만이 꼭 마음이 편하다는 뜻은 아니다. 사람들의 기대와 감정이 너무 무거워서 그 압박에 못 이기는 날이 있다. 일상을 살다보면 일상이 꼭 물 속인 것만 같다.이건 일종의 갈증과도 같다. 나를 압박하는 모든 것으로부터의 자유를 향한 갈증.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794645/original_619a63ccddc230fbe49607574fdfe29e.png?1765720205?bc=0"
+    ]
+  },
+
+  "11": {
+    caption: "바라야-구전의 두께, 2023, 장지에 채색",
+    text: `바리 신화는 구비 문학이다. 가장 얇으면서도 두꺼운 신화다. 원시시대로부터 고대와 중세를 걸쳐 근대에 이르는 오랜 기억이 켜켜이 쌓여있기 때문이다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794650/original_13332530c6146248f169c34ccce2a2e3.png?1765720217?bc=0"
+    ]
+  },
+
+  "12": {
+    caption: "조용한 세상, 2023, 견에 채색",
+    text: `마주하다. 나는 나를 마주하는 것을 늘 두려워해왔다. 마치 침대 밑에 귀신이 있다는 것을 믿는 어린아이처럼, 스스로를 마주하지 못한지 시간이 꽤 흘렀다. 거울 속의 세계는 온통 고요한 세계다. 그 안의 나는 내 말을 알아듣지 못하고, 부재한 눈으로 실재하는 형상이 아닌 그 외의 것들을 보고 있을 뿐이다. 부족함을 마주하는 것, 내가 인지하지 못한 나를 마주하는 것 모두 내가 풀어나갈 과제라고 생각한다.`,
+    images: [
+      "https://d2w9rnfcy7mm78.cloudfront.net/41794644/original_f105726e53353f2f0e0e1cf76040a321.png?1765720205?bc=0"
+    ]
   }
-  // 필요한 만큼 계속 추가
 };
 
-/* =================================================
-   IMAGE LOAD
-================================================= */
-const params = new URLSearchParams(location.search);
-const id = params.get("id");
-
+/* ===============================
+   RENDER
+=============================== */
+const item = DATA[id];
 const hero = document.getElementById("detailHero");
-const metaBox = document.getElementById("detailMeta");
-const textBox = document.getElementById("detailText");
+const captionEl = document.getElementById("detailCaption");
+const textEl = document.getElementById("detailText");
 
-let images = [];
-let index = 0;
+if(!item){
+  captionEl.innerText = "작품 정보가 없습니다.";
+  textEl.style.display = "none";
+}else{
+  captionEl.innerText = item.caption || "";
+  const hasText = !!(item.text && item.text.trim().length);
+  textEl.innerText = hasText ? item.text : "";
+  if(!hasText) textEl.style.display = "none";
 
-/* 단수/복수 이미지 자동 처리 */
-let i = 1;
-while (true) {
-  const path = `./assets/detail/color-${id}-${i}.png`;
-  const img = new Image();
-  img.src = path;
-  img.onload = () => {
-    images.push(path);
-    if (images.length === 1) render();
-  };
-  img.onerror = () => {};
-  i++;
-  if (i > 10) break;
-}
+  const slides = [];
+  let idx = 0;
 
-function render() {
-  hero.innerHTML = images.map((src, i) =>
-    `<div class="slide ${i===0?'active':''}"><img src="${src}"></div>`
-  ).join("") + hero.innerHTML;
-}
+  (item.images || []).forEach((url, i) => {
+    const d = document.createElement("div");
+    d.className = "dslide" + (i === 0 ? " active" : "");
+    d.innerHTML = `<img src="${url}" alt="">`;
+    hero.appendChild(d);
+    slides.push(d);
+  });
 
-document.getElementById("nextBtn").onclick = () => change(1);
-document.getElementById("prevBtn").onclick = () => change(-1);
+  function show(i){
+    slides.forEach(s=>s.classList.remove("active"));
+    slides[i].classList.add("active");
+  }
 
-function change(dir){
-  const slides = document.querySelectorAll(".slide");
-  slides[index].classList.remove("active");
-  index = (index + dir + slides.length) % slides.length;
-  slides[index].classList.add("active");
-}
+  const prev = document.getElementById("dPrev");
+  const next = document.getElementById("dNext");
 
-/* TEXT */
-if (TEXT[id]) {
-  metaBox.textContent = TEXT[id].meta;
-  textBox.textContent = TEXT[id].text;
+  if(slides.length <= 1){
+    prev.style.display = "none";
+    next.style.display = "none";
+  }else{
+    prev.onclick = ()=>{ idx=(idx-1+slides.length)%slides.length; show(idx); };
+    next.onclick = ()=>{ idx=(idx+1)%slides.length; show(idx); };
+  }
 }
 </script>
 
-<script src="./js/app.js"></script>
 </body>
 </html>
